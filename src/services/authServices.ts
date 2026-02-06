@@ -23,7 +23,7 @@ class AuthServices {
 
       const { secret, expiresIn } = authConfig.jwt;
 
-      const token = jwt.sign({ id: user.id }, secret, {
+      const token = jwt.sign({ role: user.role ?? "member" }, secret, {
         subject: String(user.id),
         expiresIn,
       });
