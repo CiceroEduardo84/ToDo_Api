@@ -10,6 +10,11 @@ const teamMembersControllers = new TeamMembersControlers();
 // Members
 teamsRoutes.get("/teams/:teamId/members", teamMembersControllers.read);
 
+// Teams
+teamsRoutes.get("/teams", teamsControllers.read);
+
+// functions for admin
+// Members
 teamsRoutes.use(verifyUserAuthorization(["admin"]));
 teamsRoutes.post("/teams/:teamId/members", teamMembersControllers.create);
 teamsRoutes.delete(
@@ -19,7 +24,6 @@ teamsRoutes.delete(
 
 //Teams
 teamsRoutes.post("/teams", teamsControllers.create);
-teamsRoutes.get("/teams", teamsControllers.read);
 teamsRoutes.put("/teams/:teamId", teamsControllers.update);
 teamsRoutes.delete("/teams/:teamId", teamsControllers.delete);
 
