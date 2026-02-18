@@ -8,23 +8,23 @@ const teamsControllers = new TeamsControlers();
 const teamMembersControllers = new TeamMembersControlers();
 
 // Members
-teamsRoutes.get("/teams/:teamId/members", teamMembersControllers.read);
+teamsRoutes.get("/:teamId/members", teamMembersControllers.read);
 
 // Teams
-teamsRoutes.get("/teams", teamsControllers.read);
+teamsRoutes.get("/", teamsControllers.read);
 
 // functions for admin
 // Members
 teamsRoutes.use(verifyUserAuthorization(["admin"]));
-teamsRoutes.post("/teams/:teamId/members", teamMembersControllers.create);
+teamsRoutes.post("/:teamId/members", teamMembersControllers.create);
 teamsRoutes.delete(
-  "/teams/:teamId/members/:userId",
+  "/:teamId/members/:userId",
   teamMembersControllers.delete,
 );
 
 //Teams
-teamsRoutes.post("/teams", teamsControllers.create);
-teamsRoutes.put("/teams/:teamId", teamsControllers.update);
-teamsRoutes.delete("/teams/:teamId", teamsControllers.delete);
+teamsRoutes.post("/", teamsControllers.create);
+teamsRoutes.put("/:teamId", teamsControllers.update);
+teamsRoutes.delete("/:teamId", teamsControllers.delete);
 
 export { teamsRoutes };

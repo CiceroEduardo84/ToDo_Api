@@ -19,7 +19,16 @@ class TeamsControlers {
       return next(error);
     }
   }
-  async read(request: Request, response: Response, next: NextFunction) {}
+  async read(request: Request, response: Response, next: NextFunction) {
+    try {
+      const teams = await prisma.teams.findFirst();
+
+      return response.status(201).json({teams});
+    }catch (error) {
+      return next(error);
+    }
+  }
+  
   async update(request: Request, response: Response, next: NextFunction) {}
   async delete(request: Request, response: Response, next: NextFunction) {}
 }
