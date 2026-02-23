@@ -14,12 +14,17 @@ function ensureAuthentication(
   next: NextFunction,
 ) {
   try {
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new AppError("JWT token not found", 401);
+    const { cookie } = request.headers;
+    
+    if (!cookie) {
+      throw new AppError("Authentication required", 401);
     }
 
-    const [, token] = authHeader.split(" ");
+    const [, token] = cookie.split("=");
+    
+    if (!token) {
+      throw new AppError("Authentication required", 401);
+    }
 
     const { role, sub: user_id } = jwt.verify(
       token,
@@ -32,8 +37,9 @@ function ensureAuthentication(
     };
 
     return next();
-  } catch {
+  } catch{
     throw new AppError("Invalid JWT token", 401);
+    
   }
 }
 
