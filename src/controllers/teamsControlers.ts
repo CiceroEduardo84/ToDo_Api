@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { teamsSchema } from "../validations/teamsSchema";
 import { prisma } from "../database/prisma";
-import z, { number } from "zod";
 
 class TeamsControlers {
   async create(request: Request, response: Response, next: NextFunction) {
