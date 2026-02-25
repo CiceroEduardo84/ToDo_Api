@@ -15,7 +15,7 @@ teamsRoutes.get("/:teamId/members", teamMembersControllers.read);
 teamsRoutes.use(verifyUserAuthorization(["admin"]));
 teamsRoutes.post("/:teamId/members", teamMembersControllers.create);
 teamsRoutes.delete(
-  "/:teamId/members/:userId",
+  "/:teamId/members",
   teamMembersControllers.delete,
 );
 
