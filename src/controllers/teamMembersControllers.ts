@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/AppError";
 import { ValidateUserService } from "../services/validateUserService";
-import { ValidateUTeamService } from "../services/validateTeamService";
+import { ValidateTeamService } from "../services/validateTeamService";
 import { prisma } from "../database/prisma";
 
 class TeamMembersControlers {
@@ -11,7 +11,7 @@ class TeamMembersControlers {
       const { userId } = request.body;
 
       const validateUserService = new ValidateUserService();
-      const validateteamService = new ValidateUTeamService();
+      const validateteamService = new ValidateTeamService();
 
       if (!teamId || !userId) {
         throw new AppError("Dados insuficientes!", 400);
@@ -42,13 +42,44 @@ class TeamMembersControlers {
         },
       });
 
-      return response.status(201).json({ message: "Member added to the team!" });
+      return response
+        .status(201)
+        .json({ message: "Member added to the team!" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async read(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { teamId } = request.params;
+
+      const validateteamService = new ValidateTeamService();
+
+      if (!teamId) {
+        throw new AppError("Dados insuficientes!", 400);
+      }
+
+      const resultTeamn = await validateteamService.verify(Number(teamId));
+
+      if (!resultTeamn) {
+        throw new AppError("Time não encontrado.", 404);
+      }
+
+      const members = await prisma.team_Members.findMany({
+        where: { teamId: Number(teamId) },
+        include: {
+          team: true,
+          user: true,
+        },
+      });
+
+      return response.status(201).json({ members });
     } catch (error) {
       next(error);
     }
   }
   
-  async read(request: Request, response: Response, next: NextFunction) {}
   async delete(request: Request, response: Response, next: NextFunction) {}
 }
 
