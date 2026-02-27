@@ -1,6 +1,6 @@
 import { prisma } from "../database/prisma";
 
-class ValidateUTeamService {
+class ValidateTeamService {
   async verify(x: number) {
     try {
       const team = await prisma.teams.findFirst({
@@ -18,4 +18,4 @@ class ValidateUTeamService {
   }
 }
 
-export { ValidateUTeamService };
+export { ValidateTeamService };
