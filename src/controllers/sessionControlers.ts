@@ -8,11 +8,11 @@ import { hash } from "bcrypt";
 import { env } from "../validations/envSchema";
 
 class SessionControllers {
-  async signIn(request: Request, response: Response, next: NextFunction) {
+  async SignIn(request: Request, response: Response, next: NextFunction) {
     try {
       const { email, password } = loginSchema.parse(request.body);
       const authServices = new AuthServices();
-      
+
       const { id, token } = await authServices.createAuthToken({
         email,
         password,
@@ -56,6 +56,17 @@ class SessionControllers {
       });
 
       return response.status(201).json({ message: "User created!" });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async SignOut(request: Request, response: Response, next: NextFunction) {
+    try {
+      return response
+        .clearCookie(env.KEY_TOKEN)
+        .status(200)
+        .json({ message: "logout completed successfully!" });
     } catch (error) {
       return next(error);
     }
