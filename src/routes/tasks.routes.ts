@@ -6,7 +6,7 @@ const tasksControllers = new TasksControllers();
 
 tasksRoutes.post("/", tasksControllers.create);
 tasksRoutes.get("/",tasksControllers.read);
-tasksRoutes.put("/:teamId", tasksControllers.update);
-tasksRoutes.delete("/:teamId", tasksControllers.delete);
+tasksRoutes.put("/:taskId", tasksControllers.update);
+tasksRoutes.delete("/:taskId", tasksControllers.delete);
 
 export { tasksRoutes };
