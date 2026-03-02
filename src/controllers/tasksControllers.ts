@@ -61,7 +61,15 @@ class TasksControllers {
       next(error);
     }
   }
-  async read(request: Request, response: Response, next: NextFunction) {}
+  async read(request: Request, response: Response, next: NextFunction) {
+    try {
+      const tasks = await prisma.tasks.findMany();
+
+      return response.status(201).json({ tasks });
+    } catch (error) {
+      return next(error);
+    }
+  }
   async update(request: Request, response: Response, next: NextFunction) {}
   async delete(request: Request, response: Response, next: NextFunction) {}
 }
