@@ -115,7 +115,7 @@ class TasksControllers {
       });
 
       if (!taskValidate) {
-        throw new AppError("Tarefa não faz encontrada.", 409);
+        throw new AppError("Tarefa não foi encontrada.", 409);
       }
 
       await prisma.tasks.update({
@@ -138,7 +138,29 @@ class TasksControllers {
     }
   }
 
-  async delete(request: Request, response: Response, next: NextFunction) {}
+  async delete(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { taskId } = request.params;
+
+      const taskValidate = await prisma.tasks.findFirst({
+        where: {
+          id: Number(taskId),
+        },
+      });
+
+      if (!taskValidate) {
+        throw new AppError("Tarefa não foi encontrada.", 409);
+      }
+
+      await prisma.tasks.delete({
+        where: { id: Number(taskId) },
+      });
+
+      return response.status(201).json({ message: "Task deleted!" });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { TasksControllers };
