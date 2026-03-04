@@ -4,6 +4,8 @@ import { ValidateUserService } from "../services/validateUserService";
 import { ValidateTeamService } from "../services/validateTeamService";
 import { AppError } from "../utils/AppError";
 import { prisma } from "../database/prisma";
+import { paginationSchema } from "../validations/paginationSchema";
+import { Prisma } from "../../generated/prisma/browser";
 
 class TasksControllers {
   async create(request: Request, response: Response, next: NextFunction) {
@@ -14,33 +16,28 @@ class TasksControllers {
       const validateUserService = new ValidateUserService();
       const validateteamService = new ValidateTeamService();
 
-      if (
-        !title ||
-        !description ||
-        !status ||
-        !priority ||
-        !assigned_to ||
-        !team_id
-      ) {
+      if (!title || !description || !status || !priority) {
         throw new AppError("Dados insuficientes!", 400);
       }
 
-      const resultUser = await validateUserService.verify(assigned_to);
-      const resultTeamn = await validateteamService.verify(team_id);
+      if (assigned_to && team_id) {
+        const resultUser = await validateUserService.verify(assigned_to);
+        const resultTeamn = await validateteamService.verify(team_id);
 
-      if (!resultUser || !resultTeamn) {
-        throw new AppError("Usuário ou time não encontrado.", 404);
-      }
+        if (!resultUser || !resultTeamn) {
+          throw new AppError("Usuário ou time não encontrado.", 404);
+        }
 
-      const alreadyMember = await prisma.team_Members.findFirst({
-        where: {
-          userId: assigned_to,
-          teamId: team_id,
-        },
-      });
+        const alreadyMember = await prisma.team_Members.findFirst({
+          where: {
+            userId: assigned_to,
+            teamId: team_id,
+          },
+        });
 
-      if (!alreadyMember) {
-        throw new AppError("Usuário não faz parte do time.", 409);
+        if (!alreadyMember) {
+          throw new AppError("Usuário não faz parte do time.", 409);
+        }
       }
 
       await prisma.tasks.create({
@@ -61,15 +58,33 @@ class TasksControllers {
       next(error);
     }
   }
+
   async read(request: Request, response: Response, next: NextFunction) {
     try {
-      const tasks = await prisma.tasks.findMany();
+      const { status, priority } = paginationSchema.parse(request.query);
 
-      return response.status(201).json({ tasks });
+      if (!status || !priority) {
+        throw new AppError("Dados insuficientes!", 400);
+      }
+
+      const where: Prisma.TasksWhereInput = {};
+
+      if (status && status !== "all") {
+        where.status = status;
+      }
+
+      if (priority && priority !== "all") {
+        where.priority = priority;
+      }
+
+      const tasks = await prisma.tasks.findMany({ where });
+
+      return response.status(200).json({ tasks });
     } catch (error) {
       return next(error);
     }
   }
+
   async update(request: Request, response: Response, next: NextFunction) {
     try {
       const { taskId } = request.params;
@@ -131,7 +146,7 @@ class TasksControllers {
       });
 
       return response
-        .status(201)
+        .status(200)
         .json({ message: "Task successfully updated!" });
     } catch (error) {
       next(error);
@@ -156,7 +171,7 @@ class TasksControllers {
         where: { id: Number(taskId) },
       });
 
-      return response.status(201).json({ message: "Task deleted!" });
+      return response.status(200).json({ message: "Task deleted!" });
     } catch (error) {
       return next(error);
     }

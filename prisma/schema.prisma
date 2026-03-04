@@ -69,12 +69,12 @@ model Tasks {
   description   String
   status        TaskStatus
   priority      TaskPriority
-  assigned_to   Int
-  team_id       Int
+  assigned_to   Int?
+  team_id       Int?
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime?       @updatedAt @map("updated_at")
-  user          Users           @relation(fields: [assigned_to], references: [id])
-  team          Teams           @relation(fields: [team_id], references: [id])
+  user          Users?           @relation(fields: [assigned_to], references: [id])
+  team          Teams?           @relation(fields: [team_id], references: [id])
   tasks_history Tasks_History[]
 
   @@map("tasks")

@@ -5,8 +5,8 @@ export const taskSchema = z.object({
   description: z.string(),
   status: z.enum(["pending", "in_progress", "completed"]),
   priority: z.enum(["high", "medium", "low"]),
-  assigned_to: z.number(),
-  team_id: z.number(),
+  assigned_to: z.number().optional(),
+  team_id: z.number().optional(),
 });
 
 export type UserDataType = z.infer<typeof taskSchema>;
