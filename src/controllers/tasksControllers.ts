@@ -77,6 +77,10 @@ class TasksControllers {
         where.priority = priority;
       }
 
+      if (request.user.role != "admin") {
+        where.assigned_to = Number(request.user.id);
+      }
+
       const tasks = await prisma.tasks.findMany({ where });
 
       return response.status(200).json({ tasks });
