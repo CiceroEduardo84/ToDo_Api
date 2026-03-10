@@ -137,6 +137,18 @@ class TasksControllers {
         throw new AppError("Tarefa não foi encontrada.", 409);
       }
 
+      if (request.user.role != "admin") {
+        const taskIsTheUser = await prisma.tasks.findFirst({
+          where: {
+            assigned_to: Number(request.user.id),
+          },
+        });
+
+        if (!taskIsTheUser) {
+          throw new AppError("A tarefa não foi atribuída a você.", 401);
+        }
+      }
+
       await prisma.tasks.update({
         data: {
           title,
