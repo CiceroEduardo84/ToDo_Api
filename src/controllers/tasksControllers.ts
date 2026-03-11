@@ -63,10 +63,6 @@ class TasksControllers {
     try {
       const { status, priority } = paginationSchema.parse(request.query);
 
-      if (!status || !priority) {
-        throw new AppError("Dados insuficientes!", 400);
-      }
-
       const where: Prisma.TasksWhereInput = {};
 
       if (status && status !== "all") {
@@ -159,6 +155,15 @@ class TasksControllers {
           team_id,
         },
         where: { id: Number(taskId) },
+      });
+
+      await prisma.tasks_History.create({
+        data: {
+          task_id: Number(taskId),
+          changed_by: Number(request.user.id),
+          old_status: taskValidate.status,
+          new_status: status,
+        },
       });
 
       return response
