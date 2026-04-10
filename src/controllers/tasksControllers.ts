@@ -77,7 +77,7 @@ class TasksControllers {
         where.assigned_to = Number(request.user.id);
       }
 
-      const tasks = await prisma.tasks.findMany({ where });
+      const tasks = (await prisma.tasks.findMany({ where, include: { tasks_history: true } }));
 
       return response.status(200).json({ tasks });
     } catch (error) {

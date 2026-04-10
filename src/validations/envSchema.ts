@@ -6,6 +6,7 @@ const envSchema = z.object({
   SECRET_TOKEN: z.string(),
   EXPIRESIN_TOKEN: z.string().default("18h"),
   KEY_TOKEN: z.string(),
+  ENVIRONMENT: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

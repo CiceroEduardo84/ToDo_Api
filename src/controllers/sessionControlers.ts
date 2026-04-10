@@ -12,6 +12,7 @@ class SessionControllers {
     try {
       const { email, password } = loginSchema.parse(request.body);
       const authServices = new AuthServices();
+      const isProduction = env.ENVIRONMENT === "production";
 
       const { id, token } = await authServices.createAuthToken({
         email,
@@ -20,11 +21,10 @@ class SessionControllers {
 
       response.cookie(env.KEY_TOKEN, token, {
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 1000 * 60 * 60 * 18,
       });
-
       return response
         .status(200)
         .json({ message: "Login completed sucessfully!", id });
@@ -42,7 +42,7 @@ class SessionControllers {
       });
 
       if (emailExists) {
-        return new AppError("Email already exists!", 409);
+        throw new AppError("Email already exists!", 409);
       }
 
       const passwordHash = await hash(password, 10);
@@ -66,7 +66,7 @@ class SessionControllers {
       return response
         .clearCookie(env.KEY_TOKEN)
         .status(200)
-        .json({ message: "logout completed successfully!" });
+        .json({ message: "Logout completed successfully!" });
     } catch (error) {
       return next(error);
     }
