@@ -40,7 +40,7 @@ class TasksControllers {
         }
       }
 
-      await prisma.tasks.create({
+      const { id } = await prisma.tasks.create({
         data: {
           title,
           description,
@@ -53,7 +53,7 @@ class TasksControllers {
 
       return response
         .status(201)
-        .json({ message: "Task successfully assigned!" });
+        .json({ message: "Task successfully assigned!", id });
     } catch (error) {
       next(error);
     }
@@ -77,7 +77,10 @@ class TasksControllers {
         where.assigned_to = Number(request.user.id);
       }
 
-      const tasks = (await prisma.tasks.findMany({ where, include: { tasks_history: true } }));
+      const tasks = await prisma.tasks.findMany({
+        where,
+        include: { tasks_history: true },
+      });
 
       return response.status(200).json({ tasks });
     } catch (error) {
