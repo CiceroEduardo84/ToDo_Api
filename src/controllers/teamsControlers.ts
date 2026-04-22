@@ -7,14 +7,14 @@ class TeamsControlers {
     try {
       const { name, description } = teamsSchema.parse(request.body);
 
-      await prisma.teams.create({
+      const { id } = await prisma.teams.create({
         data: {
           name,
           description,
         },
       });
 
-      return response.status(201).json({ message: "Team created!" });
+      return response.status(201).json({ message: "Team created!", id });
     } catch (error) {
       return next(error);
     }
