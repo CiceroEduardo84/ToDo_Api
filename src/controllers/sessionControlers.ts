@@ -25,9 +25,10 @@ class SessionControllers {
         sameSite: isProduction ? "none" : "lax",
         maxAge: 1000 * 60 * 60 * 18,
       });
+      
       return response
         .status(200)
-        .json({ message: "Login completed sucessfully!", id });
+        .json({ message: "Login completed successfully!", id });
     } catch (error) {
       return next(error);
     }
