@@ -1,5 +1,9 @@
 # ToDo - RESTfull API
 
+## About
+
+This project was a challenge proposed by Rocketseat, the objective of which is the development of an API for task management.
+
 ## Technologies
 
 - `Node.js`
@@ -40,6 +44,9 @@ $ git clone https://github.com/CiceroEduardo84/ToDo_Api.git
 
 # install dependencies
 $ npm install
+
+# Run docker-compose
+$ docker-compose up
 
 # run migrations
 $ npx prisma migrate dev
